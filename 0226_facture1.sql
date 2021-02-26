@@ -34,15 +34,15 @@ CREATE TABLE commande (
     CONSTRAINT cle_com_prod FOREIGN KEY (numProd) REFERENCES produit(numProd)
 );
 
-#2
+#2  	la liste des clients de Paris.
 SELECT * FROM clients WHERE adresseCli LIKE "%paris%" OR clients.adresseCli IN (75___);
-#3
+#3 		la liste des produits (Numprod, désignation, prix) classés de plus cher au moins cher.
 SELECT numProd, designation, prix FROM produit ORDER BY prix;
-#4
+#4		noms et adresses des vendeurs dont le nom commence par la lettre ‘M’.
 SELECT nomVendeur, adresse_vend FROM vendeur WHERE nomVendeur LIKE "M%";
-#5
+#5		la liste des commandes effectuées par le vendeur "Moussa" entre le 1er et 28 février.
 SELECT * FROM commande WHERE nomVendeur = "Moussa" HAVING date_com BETWEEN "2021-02-01" AND "2021-02-28";
-#6
+#6		le nombre des commandes contenant le produit n° 365.
 SELECT COUNT(*) FROM commande HAVING numProd = 365;
 
 

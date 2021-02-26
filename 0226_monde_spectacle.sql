@@ -42,21 +42,78 @@ CREATE TABLE Vente (
     CONSTRAINT cle_vente_billet FOREIGN KEY (Billet_ID) REFERENCES Billet(Billet_ID)
 );
 
-#1
+#1  Quelles sont les dates du concert de Corneille au Zenith
 SELECT DateDeb FROM Spectacle 
 	WHERE Salle_ID IN(SELECT * FROM Salle WHERE nom = "Zenith" )
 	HAVING Chanteur LIKE "Corneille"
 ;
-#2
-SELECT nom FROM Salle ORDER BY capacite LIMIT 5;
-#3
-SELECT Chanteur FROM Spectacle WHERE ;
-#4
+#2  Quels sont les noms des salles ayant la plus grande capacité ?
+SELECT nom FROM Salle ORDER BY capacite DESC LIMIT 5;
 
-#5
+/*
 
-#6
-3. Quels sont les chanteurs n’ayant jamais réalisé de concert à la Cygale ? 
-4. Quels sont les chanteurs ayant réalisé au moins un concert dans toutes les salles ? 
-5. Quels sont les dates et les identificateurs des concerts pour lesquels il ne reste aucun billet invendu
+#3  Quels sont les chanteurs n’ayant jamais réalisé de concert à la Cygale ? 
+SELECT Chanteur FROM Spectacle 
+WHERE Salle_ID 
+NOT IN 	(
+		SELECT Salle_ID FROM Salle WHERE nom = "Cygale"
+        ) 
+GROUP BY Chanteur
+;
+SELECT Chanteur FROM Spectacle GROUP BY Chanteur
+EXCEPT MINUS
+SELECT DISTINCT Chanteur FROM Spectacle IN(SELECT Salle_ID FROM Salle WHERE nom = "Cygale")
+;
+#4 Quels sont les chanteurs ayant réalisé au moins un concert dans toutes les salles ? 
+SELECT Chanteur FROM Spectacle 
+WHERE COUNT(DISTINCT Salle_ID) 
+IN(SELECT COUNT(DISTINCT Salle_ID) FROM Salle)
+;*/
+#5 Quels sont les dates et les identificateurs des concerts pour lesquels il ne reste aucun billet invendu
+SHOW TABLES;
+SELECT Dates, Concert_ID FROM Concert WHERE Concert_ID IN(
+	SELECT Concert_ID FROM Billet WHERE COUNT(Billet GROUP BY Concert_ID) IN(
+		SELECT capacite FROM Salle WHERE Salle_ID IN (
+			SELECT Salle_ID FROM Spectacle WHERE Spectacle_ID IN (
+				SELECT Spectacle_ID FROM Concert WHERE Concert_ID IN (
+					SELECT DISTINCT Concert_ID FROM Billet
+				)
+			)
+		)
+	)
+)
+;
+/*
+Salle.Capacite = Concert_ID.nombre de billets vendus
+nombre de billets vendus = COUNT(Billet GROUP BY Concert_ID)
+Concert_ID donne Spectacle_ID donne Salle_ID
+*/
+SELECT Concert_ID FROM Billet
+WHERE(
+	SELECT capacite FROM Salle
+    INTERSECT
+    SELECT COUNT(Billet GROUP BY Concert_ID) FROM Billet
+)
+WHERE SELECT COUNT(DISTINCT Salle_ID) = COUNT(Billet GROUP BY Concert_ID)
+SELECT * FROM Concert 
 
+	#FUNCTION COMPTER LES PLACES POSSIBLES D'UN CONCERT
+SELECT capacite FROM Salle WHERE Salle_ID IN (
+	SELECT Salle_ID FROM Spectacle WHERE Spectacle_ID IN (
+		SELECT Spectacle_ID FROM Concert WHERE Concert_ID IN (
+			SELECT DISTINCT Concert_ID FROM Billet
+        )
+	)
+)
+	#FUNCTION COMPTER LES BILTES VENDUS D'UN CONCERT
+SELECT COUNT(Billet GROUP BY Concert_ID) FROM Billet
+	#MIX
+SELECT Concert_ID FROM Billet WHERE COUNT(Billet GROUP BY Concert_ID) IN(
+	SELECT capacite FROM Salle WHERE Salle_ID IN (
+		SELECT Salle_ID FROM Spectacle WHERE Spectacle_ID IN (
+			SELECT Spectacle_ID FROM Concert WHERE Concert_ID IN (
+				SELECT DISTINCT Concert_ID FROM Billet
+			)
+		)
+	)
+)

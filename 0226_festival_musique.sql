@@ -28,21 +28,16 @@ SELECT * FROM musicien;
 SELECT * FROM programme;
 
 #Requetes SQL
-#1
+#1		La liste des titres des représentations.
 SELECT titre_rep FROM representation;
-#2
+#2		La liste des titres des représentations ayant lieu au « théâtre JCC »
 SELECT titre_rep FROM representation WHERE lieu like "theatre JCC";
-#3
+#3		La liste des noms des musiciens et des titres et les titres des représentations auxquelles ils participent.
 /*VERSION SIMPLE vue après:*/
 SELECT musicien.nom, representation.titre_rep WHERE musicien.num_rep = representation.num_rep;
 
-SELECT 
-	nom, titre_rep 
-	FROM musicien/*INNER facultatif dans ce cas*/ JOIN representation 
-	WHERE/*ON*/ musicien.num_rep = representation.num_rep
-;
 
-#4
+#4  	La liste des titres des représentations, les lieux et les tarifs du 28/02/2021.
 SELECT 
 	representation.titre_rep , lieu, tarif
     FROM programme 
@@ -61,9 +56,9 @@ SELECT
     WHERE num_rep IN(SELECT * FROM representation)
     HAVING date_rep = "2021/02/28"
 ;
-#5
+#5		Le nombre des musiciens qui participent à la représentations n°15.
 SELECT COUNT(DISTINCT num_mus) FROM representation WHERE num_rep = 15;
-#6
+#6		Les représentations et leurs dates dont le tarif ne dépasse pas 30Euros.
 SELECT representation.titre_rep, date_rep FROM programme WHERE tarif <30 ;
 /*GENERIQUE
 SELECT *
