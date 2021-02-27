@@ -23,9 +23,34 @@ SHOW TABLES;
 SHOW DATABASES;
 
 SELECT * FROM centres;
-DELETE 
 UPDATE centres SET specialite = "Nanotechnologie" WHERE specialite = "Nanptechnologie";
 
 ALTER TABLE centres add id INT NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST;
 ALTER TABLE centres DROP COLUMN id;
 SELECT * FROM centres;
+
+
+SHOW DATABASES;
+SHOW TABLES;
+CREATE DATABASE etudiants_examen;
+USE etudiants_examen;
+
+CREATE TABLE etudiant (matricule INT NOT NULL, nom VARCHAR(30) NOT NULL, prenom VARCHAR(30) NOT NULL, date_de_naissance DATE NOT NULL, niveau INT NOT NULL);
+CREATE TABLE cours (code_cours INT NOT NULL, nom_du_cours VARCHAR(30) NOT NULL, enseignant VARCHAR(30) DEFAULT "Moussa Camara");
+CREATE TABLE examen (matricule INT NOT NULL, code_cours VARCHAR(20) NOT NULL, note INT );
+
+#ALTER TABLE examen CHANGE note notes INT);
+
+SELECT * FROM etudiant;
+SELECT * FROM examen;
+SELECT * FROM cours;
+SELECT * FROM etudiant ORDER BY date_de_naissance;
+SELECT * FROM etudiant WHERE niveau = "CAP" OR niveau = "BAC";
+
+SELECT matricule, AVG(note) FROM examen;
+SELECT matricule, AVG(note) FROM examen GROUP BY matricule;
+SELECT matricule, AVG(note) FROM examen GROUP BY matricule HAVING AVG(note)>= 10;
+SELECT matricule, AVG(note) FROM examen GROUP BY code_cours;
+#SELECT COUNT(SELECT matricule, AVG(note) FROM examen GROUP BY matricule HAVING AVG(note)>= 10) FROM cours;
+SELECT COUNT(*) FROM cours;
+
