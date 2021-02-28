@@ -9,31 +9,33 @@ HAVING COUNT(DISTINCT Salle_ID) IN(
 SELECT Chanteur, Salle_ID, Spectacle_ID FROM Spectacle4 requetegobale
 WHERE EXISTS ( # Liste chanteur pas toute salle
 	# 1 chanteur a toutes les salles   #toutes les salles existes pour 1 chanteur
-    SELECT Chanteur FROM Spectacle4.sousrequete
-    WHERE sousrequete.Chanteur = EXISTS(
-		SELECT requetegobale.Chanteur FROM Spectacle4
-    )
+   
+		SELECT  FROM 
+        WHERE Salle4.Salle_ID = Spectacle4.Salle_ID   #Recherche de chaque salle dans ce chanteur
+    
 )
 ;
 SELECT Chanteur, Salle_ID, Spectacle_ID FROM Spectacle4
 WHERE EXISTS (  # Liste chanteur toutes salle
 	#tous les salles ont 1 Chanteur #1 meme chanteur existe dans toutes les salles
-    SELECT Salle_ID FROM Salle4
-    WHERE sousrequete.Chanteur = ALL(
-		SELECT requetegobale.Chanteur FROM Spectacle4
-    )
+		
+        SELECT  FROM 
+		WHERE requetegobale.Chanteur = sousrequete.Chanteur
+    
 )
 ;
 SELECT Chanteur, Salle_ID, Spectacle_ID FROM Spectacle4
 WHERE NOT EXISTS ( # Liste chanteur pas toute salle
 	#Une salle sans ce chanteur
-    
+    SELECT  FROM 
+	WHERE requetegobale.Chanteur = sousrequete.Chanteur
 )
 ;
 SELECT Chanteur, Salle_ID, Spectacle_ID FROM Spectacle4
 WHERE NOT EXISTS (  # Liste chanteur toutes salle
 	#Un chanteur sans cette salle
-    
+    SELECT  FROM 
+	WHERE Salle4.Salle_ID = Spectacle4.Salle_ID
 )
 ;
 

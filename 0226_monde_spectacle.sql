@@ -171,7 +171,7 @@ WHERE NOT EXISTS
 #5 Quels sont les dates et les identificateurs des concerts pour lesquels il ne reste aucun billet invendu
  # Probleme integration COUNT
 SELECT Dates, Concert_ID FROM Concert WHERE Concert_ID IN(
-	SELECT Concert_ID FROM Billet WHERE COUNT(Billet GROUP BY Concert_ID) =( # Probleme integration COUNT
+	SELECT Concert_ID FROM Billet HAVING COUNT(Billet GROUP BY Concert_ID) = ( # Probleme integration COUNT
 		SELECT capacite FROM Salle WHERE Salle_ID IN (
 			SELECT Salle_ID FROM Spectacle WHERE Spectacle_ID IN (
 				SELECT Spectacle_ID FROM Concert WHERE Concert_ID IN (
