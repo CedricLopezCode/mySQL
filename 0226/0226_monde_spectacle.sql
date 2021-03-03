@@ -9,7 +9,7 @@ CREATE TABLE Salle (
 	Salle_ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(55) NOT NULL,
     Adresse VARCHAR(255) NOT NULL,
-    Capacite INT
+    capacite INT
 );
 INSERT INTO Salle (nom, adresse,capacite) VALUES ("Zenith","bbb",1), ("Cygale","vvv",2), ("ddd","eee",5), ("fff","ggg",10), ("hhh","iii",3), ("jjj","kkk",3), ("lll","mmm",2);
 SELECT * FROM Salle;
@@ -27,8 +27,7 @@ SELECT * FROM Spectacle;
 CREATE TABLE Concert (
 	Concert_ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	Dates DATE NOT NULL,
-    Heure DATETIME NOT NULL,
-    Duree INT NOT NULL,
+    Heure TIME NOT NULL,
     Spectacle_ID INT NOT NULL,
     CONSTRAINT cle_conc_spec FOREIGN KEY (Spectacle_ID) REFERENCES Spectacle(Spectacle_ID)
 );
@@ -62,6 +61,8 @@ AND Chanteur LIKE "Corneille"
 ;
 #2  Quels sont les noms des salles ayant la plus grande capacité ?
 SELECT nom, capacite FROM Salle ORDER BY capacite DESC LIMIT 5;
+SELECT nom, capacite FROM Salle WHERE capacite = MAX(capacite);
+SELECT nom, capacite FROM Salle HAVING MAX(capacite);
 #2bis  Quels sont les noms des salles ayant la plus grande capacité ?
 SELECT nom, capacite FROM Salle 
 WHERE capacite IN(
@@ -157,6 +158,26 @@ WHERE Chanteur = ALL(
 )
 GROUP BY Chanteur
 ;
+#Presque comme Correction
+SELECT Chanteur, Salle_ID, Spectacle_ID FROM Spectacle4
+WHERE NOT EXISTS (  # Liste chanteur toutes salle
+	SELECT Salle_ID FROM Salle4 # un id de salle....
+    WHERE Spectacle4.Salle_ID =  Salle4.Salle_ID
+    AND NOT EXISTS( #... sans ce chanteur
+		SELECT SALLE_ID FROM Spectacle4
+        WHERE 1 = 1
+    )
+)
+;
+#4 Corrections Moussa
+SELECT Chanteur FROM Spectacle as spect
+WHERE NOT EXISTS(
+	SELECT * FROM Salle as sa WHERE NOT EXISTS(
+		SELECT * FROM Spectacle as sp
+		WHERE sp.Chanteur = spect.Chanteur 
+        AND sa.Salle_ID = sp.Salle_ID
+	)
+);
 #4 Corrections Internet
 SELECT Chanteur FROM Spectacle t 
 WHERE NOT EXISTS
