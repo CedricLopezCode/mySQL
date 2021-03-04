@@ -54,9 +54,88 @@ SELECT COUNT(*) nombre FROM logement WHERE categorie LIKE "location";
 SELECT DISTINCT ville FROM demande;
 SELECT ville FROM demande GROUP BY ville;
 #8. Affichez le nombre de biens à vendre par ville
-SELECT ville, COUNT(*) FROM logement WHERE  categorie LIKE "vente" GROUP BY ville;
+SELECT ville, COUNT(*) FROM logement WHERE categorie LIKE "vente" GROUP BY ville;
 #9. Quelles sont les id des logements destinés à la location ?
 SELECT idLogement FROM logement WHERE categorie LIKE "location";
+#10. Quels sont les id des logements entre 20 et 30m² ?
+SELECT idLogement FROM logement WHERE superficie >= 20 AND superficie <= 30;
+#11. Quel est le prix vendeur (hors frais) du logement le moins cher à vendre ? (Alias : prix minimum)
+SELECT MIN(prix) AS "prix minimum" FROM logement WHERE categorie LIKE "vente";
+#12. Dans quelles villes se trouve les maisons à vendre ?
+SELECT DISTINCT ville FROM logement WHERE categorie LIKE "vente" AND type = "maison";
+#13. L’agence Orpi souhaite diminuer les frais qu’elle applique sur le logement ayant l'id « 3 ». 
+#Passer les frais de ce logement de 800 à 730€   
+INSERT INTO logement_agence (idAgence, idLogement, frais) VALUES (5, 000003, 800);
+				# VALUES ((SELECT idAgence FROM agence WHERE nom = "orpi" ), 000003, 800);
+UPDATE logement_agence SET frais = 730 WHERE idLogement = 3;        
+#14. Quels sont les logements gérés par l’agence « seloger »
+INSERT INTO logement_agence (idAgence, idLogement, frais) VALUES (8, 000004, 800), (8, 000005, 800);
+#Simple
+SELECT * from logement WHERE idLogement IN (
+	SELECT idLogement FROM logement_agence WHERE idAgence IN(
+		SELECT idAgence FROM agence WHERE nom = "seloger" )
+);
+#Jointure
+SELECT * from logement INNER JOIN logement_agence INNER JOIN agence 
+ON logement.idLogement = logement_agence.idLogement
+AND logement_agence.idAgence = agence.idAgence
+AND nom = "seloger"
+;
+#15. Affichez le nombre de propriétaires dans la ville de Paris (Alias : Nombre)
+SELECT COUNT(DISTINCT idPersonne) Nombre FROM logement_personne;
+#16. Affichez les informations des trois premières personnes souhaitant acheter un logement
+#Simple
+SELECT nom, prenom, email FROM personne 
+WHERE idPersonne IN(
+	SELECT idPersonne FROM demande) 
+LIMIT 3;
+#Jointure
+SELECT nom, prenom, email FROM personne INNER JOIN demande
+ON personne.idPersonne = demande.idPersonne
+LIMIT 3;
+#17. Affichez les prénoms, email des personnes souhaitant accéder à un logement en location sur la ville de Paris
+#Simple
+SELECT * FROM personne
+WHERE idPersonne IN(
+	SELECT idPersonne FROM demande WHERE ville = "paris" AND categorie = "location" )
+;
+#Jointure
+SELECT * FROM personne INNER JOIN demande
+ON personne.idPersonne = demande.idPersonne
+AND ville = "paris"
+AND categorie = "location"
+;
+#18. Si l’ensemble des logements étaient vendus ou loués demain, quel serait le bénéfice généré grâce aux frais d’agence et pour chaque agence (Alias : bénéfice, classement : par ordre croissant des gains)
+SELECT idAgence, SUM(frais) bénéfice FROM logement_agence GROUP BY idAgence ORDER BY bénéfice /*ASC*/;
+#19. Affichez le prénom et la ville où se trouve le logement de chaque propriétaire
+#Simple
+SELECT prenom, ville FROM logement_personne, logement, personne 
+WHERE logement_personne.idPersonne = personne.idPersonne
+AND logement_personne.idLogement = logement.idLogement
+;
+#Jointure
+SELECT prenom, ville FROM personne INNER JOIN logement_personne INNER JOIN logement
+ON logement_personne.idPersonne = personne.idPersonne
+AND logement_personne.idLogement = logement.idLogement
+;
+#20. Affichez le nombre de logements à la vente dans la ville de recherche de « hugo » (alias : nombre)
+#Simple
+SELECT COUNT(*) nombre FROM logement 
+WHERE categorie LIKE "vente" 
+AND ville IN(
+	SELECT ville FROM demande WHERE idPersonne IN(
+		SELECT idPersonne FROM personne WHERE prenom = "bbb"/*Cedric*/
+    )
+)
+;
+#Jointure
+SELECT COUNT(*) nombre FROM logement INNER JOIN demande INNER JOIN personne
+ON logement.ville = demande.ville
+AND logement.categorie LIKE "vente" 
+AND personne.idPersonne = demande.idPersonne
+AND prenom = "bbb"
+;
+
 /*--------------------------En Cours--------------------------------------------------------*/
 SELECT * FROM agence;
 SELECT * FROM demande;
@@ -64,17 +143,7 @@ SELECT * FROM logement;
 SELECT * FROM logement_agence;
 SELECT * FROM logement_personne;
 SELECT * FROM personne;
-#10. Quels sont les id des logements entre 20 et 30m² ?
-SELECT idLogement, superficie FROM logement WHERE superficie >= 20 AND superficie <= 30;
+
+
 /*--------------------------En cours--------------------------------------------------------*/
 
-#11. Quel est le prix vendeur (hors frais) du logement le moins cher à vendre ? (Alias : prix minimum)
-#12. Dans quelles villes se trouve les maisons à vendre ?
-#13. L’agence Orpi souhaite diminuer les frais qu’elle applique sur le logement ayant l'id « 3 ». Passer les frais de ce logement de 800 à 730€          
-#14. Quels sont les logements gérés par l’agence « seloger »
-#15. Affichez le nombre de propriétaires dans la ville de Paris (Alias : Nombre)
-#16. Affichez les informations des trois premières personnes souhaitant acheter un logement
-#17. Affichez les prénoms, email des personnes souhaitant accéder à un logement en location sur la ville de Paris
-#18. Si l’ensemble des logements étaient vendus ou loués demain, quel serait le bénéfice généré grâce aux frais d’agence et pour chaque agence (Alias : bénéfice, classement : par ordre croissant des gains)
-#19. Affichez le prénom et la ville où se trouve le logement de chaque propriétaire
-#20. Affichez le nombre de logements à la vente dans la ville de recherche de « hugo » (alias : nombre)
