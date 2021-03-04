@@ -76,26 +76,13 @@ SELECT * from logement WHERE idLogement IN (
 		SELECT idAgence FROM agence WHERE nom = "seloger" )
 );
 #Jointure
-SELECT * FROM logement INNER JOIN logement_agence INNER JOIN agence 
+SELECT * from logement INNER JOIN logement_agence INNER JOIN agence 
 ON logement.idLogement = logement_agence.idLogement
 AND logement_agence.idAgence = agence.idAgence
 AND nom = "seloger"
 ;
 #15. Affichez le nombre de propriétaires dans la ville de Paris (Alias : Nombre)
-SELECT * FROM logement;
-SELECT * FROM logement_personne;
 SELECT COUNT(DISTINCT idPersonne) Nombre FROM logement_personne;
-#Simple 
-SELECT COUNT(DISTINCT idPersonne) Nombre 
-FROM logement_personne WHERE idLogement IN(
-	SELECT idLogement FROM logement WHERE ville = "paris")
-;
-#Jointure
-SELECT COUNT(DISTINCT idPersonne) Nombre 
-FROM logement_personne INNER JOIN logement
-ON logement.idLogement = logement_personne.idLogement
-AND ville LIKE "paris"
-;
 #16. Affichez les informations des trois premières personnes souhaitant acheter un logement
 #Simple
 SELECT nom, prenom, email FROM personne 

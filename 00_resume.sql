@@ -19,7 +19,7 @@ CREATE TABLE table_2_option (
 	id_2 INT NOT NULL AUTO_INCREMENT, # A_I = se gere tout seul donc on s'en occupe pas
     age INT NOT NULL, #refuse d'ajouter si on rentre pas une valeur
 	mail VARCHAR(255) UNIQUE, #refuse d'ajouter si deja dans la DB
-    CHECK (mail = "%@%.__" OR email = "%@%.___"), #Vérifie que c'est quelque chose d'acceptable
+    CHECK (mail LIKE "%@%.__" OR email LIKE "%@%.___"), #Vérifie que c'est quelque chose d'acceptable
     PRIMARY KEY (id_2) #la cle primaire peut se mettre comme ça, avec les Foreign Key
 );
 CREATE TABLE table_3_clefs (
@@ -60,7 +60,7 @@ DELETE FROM table_1_type_data WHERE id_1 < 3;  #Supprime plusieurs lignes
         #Supprimer table
 DROP TABLE table_1_type_data;
 
-		#Creer table
+		
 		#Selectionner 
 #Générale Maximum possible dans quel ordre 
 SELECT *
