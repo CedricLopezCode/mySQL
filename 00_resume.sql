@@ -136,7 +136,8 @@ CREATE user 'cedric@localhost' IDENTIFIED by 'password'; #Ajouter un user
 	#Modifier 
 ALTER user 'cedric@localhost' IDENTIFIED by 'mdp'; #modifier un mdp
 GRANT all on *.* to 'cedric@localhost'; # modifie droit user
-# all = select + insert + update + delete  === CRUD
+# all = select + insert + update + delete (=== CRUD) + drop + truncate
+# drop supprimme les table alors que delete juste les données
 # 1ère * == Toutes les bases de données
 # 2ème * == Toutes les tables
 GRANT all on base_ou_il_a_les_droits.table_ou_il_a_les_droits to 'cedric@localhost';

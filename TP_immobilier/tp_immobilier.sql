@@ -24,14 +24,16 @@ CREATE USER "afpa" IDENTIFIED BY "afpa";
 DROP USER "afpa";
 
 CREATE USER "afpa@localhost" IDENTIFIED BY "afpa";
+/*Correction*/CREATE USER "afpa"@"localhost" IDENTIFIED BY "afpa";
 GRANT select, insert ON immobilier.personne TO "afpa@localhost";
 GRANT select, insert ON immobilier.logement TO "afpa@localhost";
 FLUSH PRIVILEGES;
 SHOW GRANTS FOR 'afpa@localhost';
 
 CREATE USER "cda314@localhost" IDENTIFIED BY "cda314";
-GRANT delete ON immobilier.demande TO "cda314@localhost";
-GRANT delete ON immobilier.logement TO "cda314@localhost";
+/*Correction*/CREATE USER "cda314"@"localhost" IDENTIFIED BY "cda314";
+GRANT delete ON immobilier.demande TO "cda314@localhost";/*Correction "cda314"@"localhost"*/
+GRANT delete ON immobilier.logement TO "cda314@localhost";/*Correction "cda314"@"localhost"*/
 FLUSH PRIVILEGES;
 SHOW GRANTS FOR 'cda314@localhost';
 
@@ -59,6 +61,7 @@ SELECT ville, COUNT(*) FROM logement WHERE categorie LIKE "vente" GROUP BY ville
 SELECT idLogement FROM logement WHERE categorie LIKE "location";
 #10. Quels sont les id des logements entre 20 et 30m² ?
 SELECT idLogement FROM logement WHERE superficie >= 20 AND superficie <= 30;
+/*Correction*/SELECT idLogement FROM logement WHERE superficie BETWEEN 20 AND 30;
 #11. Quel est le prix vendeur (hors frais) du logement le moins cher à vendre ? (Alias : prix minimum)
 SELECT MIN(prix) AS "prix minimum" FROM logement WHERE categorie LIKE "vente";
 #12. Dans quelles villes se trouve les maisons à vendre ?
@@ -67,7 +70,10 @@ SELECT DISTINCT ville FROM logement WHERE categorie LIKE "vente" AND type = "mai
 #Passer les frais de ce logement de 800 à 730€   
 INSERT INTO logement_agence (idAgence, idLogement, frais) VALUES (5, 000003, 800);
 				# VALUES ((SELECT idAgence FROM agence WHERE nom = "orpi" ), 000003, 800);
-UPDATE logement_agence SET frais = 730 WHERE idLogement = 3;        
+UPDATE logement_agence SET frais = 730 WHERE idLogement = 3;  
+/*Correction Ingrid*/
+SELECT REPLACE(frais, 800 , 730) FROM logement_agence WHERE idLogement = 3;
+/*Ne change que dans l'affichage, pas dans les bases de données*/
 #14. Quels sont les logements gérés par l’agence « seloger »
 INSERT INTO logement_agence (idAgence, idLogement, frais) VALUES (8, 000004, 800), (8, 000005, 800);
 #Simple
@@ -82,9 +88,6 @@ AND logement_agence.idAgence = agence.idAgence
 AND nom = "seloger"
 ;
 #15. Affichez le nombre de propriétaires dans la ville de Paris (Alias : Nombre)
-SELECT * FROM logement;
-SELECT * FROM logement_personne;
-SELECT COUNT(DISTINCT idPersonne) Nombre FROM logement_personne;
 #Simple 
 SELECT COUNT(DISTINCT idPersonne) Nombre 
 FROM logement_personne WHERE idLogement IN(
@@ -98,22 +101,22 @@ AND ville LIKE "paris"
 ;
 #16. Affichez les informations des trois premières personnes souhaitant acheter un logement
 #Simple
-SELECT nom, prenom, email FROM personne 
+SELECT * FROM personne 
 WHERE idPersonne IN(
 	SELECT idPersonne FROM demande) 
 LIMIT 3;
 #Jointure
-SELECT nom, prenom, email FROM personne INNER JOIN demande
+SELECT * FROM personne INNER JOIN demande
 ON personne.idPersonne = demande.idPersonne
 LIMIT 3;
 #17. Affichez les prénoms, email des personnes souhaitant accéder à un logement en location sur la ville de Paris
 #Simple
-SELECT * FROM personne
+SELECT prenom, email FROM personne
 WHERE idPersonne IN(
 	SELECT idPersonne FROM demande WHERE ville = "paris" AND categorie = "location" )
 ;
 #Jointure
-SELECT * FROM personne INNER JOIN demande
+SELECT prenom, email FROM personne INNER JOIN demande
 ON personne.idPersonne = demande.idPersonne
 AND ville = "paris"
 AND categorie = "location"
