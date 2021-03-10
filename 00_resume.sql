@@ -2,7 +2,7 @@
 #mySQL Workbench ctr+entr pour executer une ligne ou icone eclair pour plusieurs sélectionnées
 SHOW DATABASES;
 CREATE DATABASE 00_resume;
-CREATE DATABASE 00_resume CHARACTER SET 'utf-8'; #Pour avoir les accents, etc...
+CREATE DATABASE 00_resume CHARACTER SET "utf8"; #Pour avoir les accents, etc...
 USE 00_resume;
 
 /*--------------------------------- Creation Table ---------------------------------*/
